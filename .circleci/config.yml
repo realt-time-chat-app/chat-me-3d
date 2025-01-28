@@ -8,32 +8,27 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            npm ci  # Installs dependencies from package-lock.json
+          command: npm ci
       - run:
           name: Run tests
-          command: |
-            npm test  # Or your test command
+          command: npm test
 
   deploy:
     docker:
       - image: cimg/node:20.18.2
+    environment:
+      FLY_API_TOKEN: $FLY_API_TOKEN
     steps:
       - checkout
       - run:
           name: Install Flyctl
-          command: |
-            curl -fsSL https://fly.io/install.sh | sh  # Install flyctl
+          command: curl -fsSL https://fly.io/install.sh | sh
       - run:
           name: Build the app
-          command: |
-            npm run build  # Build your project if necessary
+          command: npm run build
       - run:
           name: Deploy to Fly.io
-          command: |
-            flyctl deploy --remote-only --config fly.toml  # Deploy the app using Fly.io
-        environment:
-          FLY_API_TOKEN: $FLY_API_TOKEN
+          command: flyctl deploy --remote-only --config fly.toml
 
 workflows:
   version: 2
