@@ -50,6 +50,6 @@ COPY --from=build /app /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-# Start the server by default, this can be overwritten at runtime
+# Start the server by default, can be oveweitten at runtime
 EXPOSE 5170
 CMD [ "npm", "run", "start" ]
