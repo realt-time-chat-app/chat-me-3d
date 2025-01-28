@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@/components:": ["/components"],
+    },
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+//    "types": ["node", "vite/client", "react", "react-dom", "jest", "vitest", "vitest/globals"],
+    "types": ["node", "vite/client", "react", "react-dom", "vitest", "vitest/globals"]
+  },
+  "include": [
+    "src",
+    "vite.config.ts"
+  ]
+}
