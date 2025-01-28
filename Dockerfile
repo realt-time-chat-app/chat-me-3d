@@ -21,8 +21,10 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 # Install node modules
-COPY package.json ./
-RUN npm install --include=dev
+# COPY package.json ./
+# RUN npm install --include=dev
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev
 
 # Copy application code
 COPY . .
@@ -37,9 +39,17 @@ RUN npm prune --omit=dev
 # Final stage for app image
 FROM base
 
+# Create and switch to a non-root user
+RUN useradd --create-home --shell /bin/bash appuser
+USER appuser
+
 # Copy built application
 COPY --from=build /app /app
 
+# Install production dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 5170
 CMD [ "npm", "run", "start" ]
