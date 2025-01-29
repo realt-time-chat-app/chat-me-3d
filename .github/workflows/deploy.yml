@@ -1,0 +1,41 @@
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Flyctl
+        run: |
+          curl -fsSL https://fly.io/install.sh | sh
+          export FLYCTL_INSTALL="/home/runner/.fly"
+          export PATH="$FLYCTL_INSTALL/bin:$PATH"
+      - name: Fly.io Authentication
+        run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
+      - name: Deploy to Fly.io (Main)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          flyctl deploy --app chat-me-3d-main --remote-only --config fly.toml --build-arg VITE_USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}
+      - name: Deploy to Fly.io (Staging)
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          flyctl deploy --app chat-me-3d-staging --remote-only --config fly.toml --build-arg VITE_USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}
