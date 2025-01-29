@@ -1,12 +1,13 @@
-# fly.toml app configuration file generated for chat-me-3d on 2025-01-28T19:23:58Z
+# fly.toml app configuration file generated for my-chat-app-example on 2025-01-29T17:31:09+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'chat-me-3d'
+app = 'my-chat-app-example'
 primary_region = 'fra'
 
 [build]
+  dockerfile = 'Dockerfile'
 
 [http_service]
   internal_port = 5170
@@ -20,4 +21,3 @@ primary_region = 'fra'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 1024

@@ -50,14 +50,19 @@ COPY . .
 ARG VITE_USER_SERVICE_URL
 ENV VITE_USER_SERVICE_URL=${VITE_USER_SERVICE_URL}
 
-# Build with Vite
+# Build the Vite app
 RUN npm run build
 
-# Stage 2: Serve the built app
-FROM nginx:alpine as production
+# Stage 2: Serve with Nginx
+FROM nginx:alpine AS production
 
+# Copy built frontend
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Use custom Nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 5170 instead of 80
 EXPOSE 5170
 # CMD [ "npm", "run", "start" ]
 CMD ["nginx", "-g", "daemon off;"]
