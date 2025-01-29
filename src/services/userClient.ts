@@ -21,6 +21,6 @@ const makeRpcCall = async <T>(method: string, params?: unknown): Promise<T> => {
   }
 };
 
-export const rpcClient = {
+export const userClient = {
   makeRpcCall,
 };

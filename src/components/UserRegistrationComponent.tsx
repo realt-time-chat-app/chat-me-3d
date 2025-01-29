@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/state/user/slice';
-import { rpcClient } from '@/services/rpcClient';
+import { userClient } from '@/services/userClient';
 import {CreateUserResponse, User} from '@/types';
 import { Formik, Form } from 'formik';
 import { userValidationSchema } from "@/validations/UserValidation";
@@ -17,7 +17,7 @@ const UserRegistration: React.FC = () => {
     const { firstName, lastName, userName, email } = values;
 
     try {
-      const response: CreateUserResponse = await rpcClient.makeRpcCall<CreateUserResponse>('createUser', {
+      const response: CreateUserResponse = await userClient.makeRpcCall<CreateUserResponse>('createUser', {
         firstName,
         lastName,
         userName,
@@ -29,7 +29,7 @@ const UserRegistration: React.FC = () => {
       } else if (response?.result) {
         dispatch(setUser(response.result as User));
         alert('Registration successful!');
-        navigate('/dashboard'); // Dummy redirect to dashboard
+        navigate('/email');
       } else {
         alert('Registration failed. Please try again.');
       }
