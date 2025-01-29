@@ -13,6 +13,10 @@ export default defineConfig({
     port: 5170,
     open: true,
   },
+  build: {
+    outDir: path.resolve(__dirname, 'dist'),
+    sourcemap: true, // Optional: Adds sourcemaps for easier debugging
+  },
   test: {
     globals: true,
     environment: 'jsdom',
