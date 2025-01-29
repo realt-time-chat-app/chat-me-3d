@@ -1,55 +1,63 @@
-# syntax = docker/dockerfile:1
-
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.18.0
-FROM node:${NODE_VERSION}-slim AS base
-
-LABEL fly_launch_runtime="Node.js"
-
-# Node.js app lives here
-WORKDIR /app
-
-# Set production environment
-ENV NODE_ENV="production"
-
-
-# Throw-away build stage to reduce size of final image
-FROM base AS build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
-
-# Install node modules
-COPY package.json ./
-RUN npm install --include=dev
+## Build stage
+#FROM node:20 AS build
+#
+#WORKDIR /app
+#
+## Copy package.json and package-lock.json
 #COPY package.json package-lock.json ./
 #RUN npm ci --include=dev
+#
+## Copy source files
+#COPY . .
+#
+## Copy .env file for Vite to use during build
+#COPY .env .env
+#
+## Build the application
+#RUN npm run build
+#
+## Production stage
+#FROM node:20 AS production
+#
+#WORKDIR /app
+#
+## Copy built app from the build stage
+#COPY --from=build /app/dist /app/dist
+#
+## Install serve to serve the production build
+#RUN npm install -g serve
+#
+## Expose port
+#EXPOSE 5170
+#
+## Start the production server
+#CMD ["serve", "-s", "dist", "-l", "5170"]
 
-# Copy application code
+
+# Stage 1: Build
+FROM node:20-alpine as build
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy all source files
 COPY . .
 
-# Build application
+# Accept build-time arguments
+ARG VITE_USER_SERVICE_URL
+ENV VITE_USER_SERVICE_URL=${VITE_USER_SERVICE_URL}
+
+# Build with Vite
 RUN npm run build
 
-# Remove development dependencies
-RUN npm prune --omit=dev
+# Stage 2: Serve the built app
+FROM nginx:alpine as production
 
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Final stage for app image
-FROM base
-
-# Create and switch to a non-root user
-RUN useradd --create-home --shell /bin/bash appuser
-USER appuser
-
-# Copy built application
-COPY --from=build /app /app
-
-# Install production dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-
-# Start the server by default, this can be overwritten at runtime
 EXPOSE 5170
-CMD [ "npm", "run", "start" ]
+# CMD [ "npm", "run", "start" ]
+CMD ["nginx", "-g", "daemon off;"]

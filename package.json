@@ -4,7 +4,8 @@
   "description": "The client for the real-time chat app",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "vite",
+    "start": "serve -s dist -l 5170",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/**/*.{ts,tsx}",
