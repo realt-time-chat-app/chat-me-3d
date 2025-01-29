@@ -30,8 +30,8 @@ build/
 Thumbs.db
 
 # Package manager lock files (if you prefer not to commit them)
-yarn.lock
-package-lock.json
+#yarn.lock
+#package-lock.json
 
 # TypeScript build output
 *.tsbuildinfo
