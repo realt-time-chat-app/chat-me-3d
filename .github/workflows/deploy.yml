@@ -29,6 +29,9 @@ jobs:
           curl -fsSL https://fly.io/install.sh | sh
           export FLYCTL_INSTALL="/home/runner/.fly"
           export PATH="$FLYCTL_INSTALL/bin:$PATH"
+          echo "FLYCTL_INSTALL: $FLYCTL_INSTALL"
+          echo "PATH: $PATH"
+          flyctl --version  # Verify that flyctl was installed correctly
       - name: Fly.io Authentication
         run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
       - name: Deploy to Fly.io (Main)
