@@ -16,3 +16,14 @@ export interface CreateUserResponse {
   };
   error?: string;
 }
+
+export interface GetUserResponse {
+  result?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    email: string;
+  };
+  error?: string;
+}

@@ -5,16 +5,14 @@ import { MemoryRouter } from 'react-router-dom';
 import store from '@/state/store';
 import UserRegistrationComponent from './UserRegistrationComponent';
 import { registrationFormFields } from "@/constants/registrationFormFields";
-import { rpcClient } from '@/services/rpcClient';
+import { userClient } from '@/services/userClient';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('@/services/rpcClient', () => ({
-  rpcClient: {
+vi.mock('@/services/userClient', () => ({
+  userClient: {
     makeRpcCall: vi.fn(),
   },
 }));
-
-// vi.stubGlobal('alert', vi.fn());
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -47,7 +45,7 @@ describe('UserRegistrationComponent', () => {
       },
     };
 
-    vi.mocked(rpcClient.makeRpcCall).mockResolvedValueOnce(mockResponseData);
+    vi.mocked(userClient.makeRpcCall).mockResolvedValueOnce(mockResponseData);
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     render(
@@ -77,7 +75,7 @@ describe('UserRegistrationComponent', () => {
       expect(alertSpy).toHaveBeenCalledWith('Registration successful!');
     });
 
-    await expect(rpcClient.makeRpcCall).toHaveBeenCalledWith('createUser', mockInputData);
+    await expect(userClient.makeRpcCall).toHaveBeenCalledWith('createUser', mockInputData);
 
     alertSpy.mockRestore();
   });
