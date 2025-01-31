@@ -21,7 +21,7 @@ const FindUserByEmail: React.FC = () => {
       } else if (response?.result) {
         dispatch(setUser(response.result));
         alert('User found');
-        navigate('/dashboard'); // TODO: Create dashboard logic
+        navigate('/dashboard');
       } else {
         alert('User not found.');
       }

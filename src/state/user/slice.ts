@@ -6,8 +6,9 @@ interface UserState {
   allUsers: User[];
 }
 
+// Retrieve currentUser from sessionStorage if it exists
 const initialState: UserState = {
-  currentUser: null,
+  currentUser: JSON.parse(sessionStorage.getItem('currentUser') || 'null'),
   allUsers: [],
 };
 
@@ -17,6 +18,8 @@ const userSlice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<User>) {
       state.currentUser = action.payload;
+      // Persist the currentUser to sessionStorage
+      sessionStorage.setItem('currentUser', JSON.stringify(action.payload));
     },
     setAllUsers(state, action: PayloadAction<User[]>) {
       state.allUsers = action.payload;
@@ -24,6 +27,8 @@ const userSlice = createSlice({
     clearUser(state) {
       state.currentUser = null;
       state.allUsers = [];
+      // Remove currentUser from sessionStorage
+      sessionStorage.removeItem('currentUser');
     },
   },
 });
