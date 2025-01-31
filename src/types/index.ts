@@ -27,3 +27,12 @@ export interface GetUserResponse {
   };
   error?: string;
 }
+
+export interface Message {
+  id: string;
+  senderId: string;
+  recipientId: string;
+  content: string;
+  conversationId: string;
+  timestamp: Date;
+}
