@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src"
+    ],
     "target": "esnext",
     "module": "esnext",
     "baseUrl": "src",
@@ -14,7 +18,7 @@
     "strict": true,
     "skipLibCheck": true,
 //    "types": ["node", "vite/client", "react", "react-dom", "jest", "vitest", "vitest/globals"],
-    "types": ["node", "vite/client", "react", "react-dom", "vitest", "vitest/globals"]
+    "types": ["node", "vite/client", "react", "react-dom", "vitest", "vitest/globals", "@react-three/fiber"]
   },
   "include": [
     "src",
