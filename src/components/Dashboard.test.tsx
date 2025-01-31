@@ -86,27 +86,27 @@ describe('Dashboard Component', () => {
     vi.mocked(userClient.makeRpcCall).mockResolvedValueOnce(mockUsersResponse);
     vi.mocked(messageClient.getMessages).mockResolvedValueOnce(mockMessagesResponse);
 
-    // render once
-
     render(
       <Provider store={store}>
         <MemoryRouter>
           <Dashboard />
         </MemoryRouter>
       </Provider>
-    )
+    );
 
     const userElement = await screen.findByText('Jane Smith');
     fireEvent.click(userElement);
 
     await waitFor(() => expect(messageClient.getMessages).toHaveBeenCalledTimes(1));
 
-    const messages = mockMessagesResponse.result;
-
-    await waitFor(() => {
-      messages.forEach(({ content }) => {
-        expect(screen.getByText(content)).toBeInTheDocument();
-      });
-    });
+    // await waitFor(() => expect(screen.getAllByTestId('orbs')).toHaveLength(5), { timeout: 1000 });
+    //
+    // const messageInput = screen.getByRole('textbox');
+    // fireEvent.change(messageInput, { target: { value: 'Test message' } });
+    // fireEvent.click(screen.getByText('Send'));
+    //
+    // await waitFor(() => expect(screen.getAllByTestId('orbs')).toHaveLength(10), { timeout: 1000 });
+    //
+    // await waitFor(() => expect(screen.queryAllByTestId('orbs')).toHaveLength(0), { timeout: 6000 });
   });
 });

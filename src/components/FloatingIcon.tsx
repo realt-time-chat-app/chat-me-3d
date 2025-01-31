@@ -77,6 +77,3 @@ const FloatingIcon = forwardRef<FloatingIconRef, {}>((props, ref) => {
 FloatingIcon.displayName = 'FloatingIcon';
 
 export default FloatingIcon;
-
-
-
