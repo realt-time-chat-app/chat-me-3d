@@ -70,7 +70,7 @@ describe('FindUserByEmail', () => {
   });
 
   it('displays an error message when the user is not found', async () => {
-    const mockResponseData = { error: 'User not found' };
+    const mockResponseData = { error: { code: 404, message: "User not found." } };
 
     vi.mocked(userClient.makeRpcCall).mockResolvedValueOnce(mockResponseData);
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
@@ -92,7 +92,7 @@ describe('FindUserByEmail', () => {
     fireEvent.click(screen.getByRole('button', { name: /Continue/i }));
 
     await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalledWith('Error: User not found');
+      expect(alertSpy).toHaveBeenCalledWith('Error: User not found.');
     });
 
     alertSpy.mockRestore();

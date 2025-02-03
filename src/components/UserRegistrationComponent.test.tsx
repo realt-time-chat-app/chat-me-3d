@@ -7,12 +7,19 @@ import UserRegistrationComponent from './UserRegistrationComponent';
 import { registrationFormFields } from "@/constants/registrationFormFields";
 import { userClient } from '@/services/userClient';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { authClient } from "@/services/authClient";
 
 vi.mock('@/services/userClient', () => ({
   userClient: {
     makeRpcCall: vi.fn(),
   },
 }));
+
+vi.mock('@/services/authClient', () => ({
+  authClient: {
+    makeRpcCall: vi.fn(),
+  }
+}))
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -28,10 +35,11 @@ describe('UserRegistrationComponent', () => {
       </Provider>
     );
 
-    const fields = ['First Name', 'Last Name', 'Username', 'Email'];
+    const fields = ['first-name', 'last-name', 'user-name', 'email', 'password', 'confirm'];
     fields.forEach((field) => {
-      expect(screen.getByPlaceholderText(new RegExp(field, 'i'))).toBeInTheDocument();
+      expect(screen.getByTestId(new RegExp(field, 'i'))).toBeInTheDocument();
     });
+
     expect(screen.getByRole('button', { name: /Register/i })).toBeInTheDocument();
   });
 
@@ -61,13 +69,16 @@ describe('UserRegistrationComponent', () => {
       lastName: 'Doe',
       userName: 'johndoe',
       email: 'john@doe.com',
+      password: 'password',
+      confirmPassword: 'password',
     };
 
-    registrationFormFields.forEach(({ name, placeholder }) => {
-      fireEvent.change(screen.getByPlaceholderText(new RegExp(placeholder, 'i')), {
+    registrationFormFields.forEach(({ name, dataTestId }) => {
+      fireEvent.change(screen.getByTestId(new RegExp(dataTestId, 'i')), {
         target: { value: mockInputData[name as keyof typeof mockInputData] },
       });
     });
+
 
     fireEvent.click(screen.getByRole('button', { name: /Register/i }));
 
@@ -75,7 +86,17 @@ describe('UserRegistrationComponent', () => {
       expect(alertSpy).toHaveBeenCalledWith('Registration successful!');
     });
 
-    await expect(userClient.makeRpcCall).toHaveBeenCalledWith('createUser', mockInputData);
+    await expect(userClient.makeRpcCall).toHaveBeenCalledWith('createUser', {
+      firstName: 'John',
+      lastName: 'Doe',
+      userName: 'johndoe',
+      email: 'john@doe.com',
+    });
+
+    await expect(authClient.makeRpcCall).toHaveBeenCalledWith('createUser', {
+      userId: '1234',
+      password: 'password',
+    });
 
     alertSpy.mockRestore();
   });

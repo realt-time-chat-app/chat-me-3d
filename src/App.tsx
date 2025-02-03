@@ -5,6 +5,7 @@ import store from '@/state/store';
 import UserRegistration from "@/components/UserRegistrationComponent";
 import Dashboard from "@/components/Dashboard";
 import FindUserByEmail from "@/components/FindUserByEmail";
+import SignIn from "@/components/SignIn";
 
 const App: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<UserRegistration />} />
             <Route path="/email" element={<FindUserByEmail />} />
+            <Route path="/sign-in" element={<SignIn />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>

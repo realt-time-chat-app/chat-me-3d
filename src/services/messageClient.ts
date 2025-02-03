@@ -4,11 +4,16 @@ import { Message } from "@/types";
 // Function to make RPC calls to the message service
 const makeRpcCall = async <T>(method: string, params?: unknown): Promise<T> => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.post(import.meta.env.VITE_MESSAGE_SERVICE_URL, {
       jsonrpc: '2.0',
       method,
       params,
       id: Date.now(),
+    }, {
+      headers: {
+        Authorization: token? `Bearer ${token}`: "",
+      }
     });
 
     if (response.status !== 200) {
