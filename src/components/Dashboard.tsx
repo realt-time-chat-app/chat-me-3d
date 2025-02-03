@@ -10,6 +10,8 @@ import Chat from '@/components/Chat';
 import FloatingIcon from './FloatingIcon';
 import * as THREE from 'three';
 import { messageClient } from '@/services/messageClient';
+import { isTokenValid } from "@/utils/authHelper";
+import {useNavigate} from "react-router-dom";
 
 // interface FloatingIconRef {
 //   addOrb: (position: [number, number, number]) => void;
@@ -27,6 +29,13 @@ const Dashboard: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const floatingIconRef = useRef<FloatingIconRef | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isTokenValid()) {
+      navigate('/sign-in');
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {

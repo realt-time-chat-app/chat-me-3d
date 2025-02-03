@@ -1,29 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/state/user/slice';
 import { userClient } from '@/services/userClient';
-import { CreateUserResponse, User } from '@/types';
+import { CreateUserResponse } from '@/types';
 import { Formik, Form } from 'formik';
 import TextField from '@/components/textField';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const FindUserByEmail: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [userNotFound, setUserNotFound] = useState(false);
 
   const handleFindUser = async (values: { email: string }) => {
     try {
-      const response = await userClient.makeRpcCall<CreateUserResponse>('findUserByEmail', {
-        email: values.email,
-      });
-      if (response?.error) {
-        alert(`Error: ${response.error}`);
-      } else if (response?.result) {
-        dispatch(setUser(response.result));
-        alert('User found');
-        navigate('/dashboard');
+      setUserNotFound(false);
+      const { result } = await userClient.makeRpcCall<CreateUserResponse>(
+        'findUserByEmail', { email: values.email }
+      );
+
+      console.log("response from find user by email ", result);
+      console.log("error", result.error);
+
+      if (result.error) {
+        alert(`Error: ${result.error.message}`);
+        if (result.code === 404) {
+          console.log('User not found.');
+          setUserNotFound(true);
+        }
       } else {
-        alert('User not found.');
+        if (result) {
+          dispatch(setUser(result.result));
+        }
+
+        alert('User found');
+        navigate('/sign-in');
       }
     } catch (error) {
       console.error('An error occurred fetching email', error);
@@ -34,12 +45,9 @@ const FindUserByEmail: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
       <div className="w-full max-w-md p-8 space-y-6 bg-black border border-lime-500 rounded-2xl shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-white">email</h2>
+        <h2 className="text-3xl font-bold text-center text-white">Enter Email</h2>
 
-        <Formik
-          initialValues={{ email: '' }}
-          onSubmit={handleFindUser}
-        >
+        <Formik initialValues={{ email: '' }} onSubmit={handleFindUser}>
           {() => (
             <Form className="space-y-4">
               <TextField name="email" placeholder="Enter your email" type="email" />
@@ -52,6 +60,15 @@ const FindUserByEmail: React.FC = () => {
             </Form>
           )}
         </Formik>
+
+        { userNotFound && (
+          <p className="text-center text-red-400">
+            No user found with that email.{' '}
+            <Link to="/" className="text-lime-400 hover:underline">
+              Register?
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );
